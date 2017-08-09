@@ -89,6 +89,7 @@ public:
   bool openUrl(const QUrl &url);
   void openInBrowserNews();
   void openInExternalBrowserNews();
+  void sendToRedmine();
   void openNewsNewTab();
 
   void updateWebView(QModelIndex index);

@@ -84,6 +84,7 @@ public:
   bool showTrayIcon_;
   bool startingTray_;
   bool isMinimizeToTray_;
+  QString redmineUrl_;
   QSystemTrayIcon *traySystem;
 
   QString getIdFeedsString(int idFolder, int idException = -1);
@@ -130,6 +131,7 @@ public:
   QAction *markAllNewsRead_;
   QAction *markStarAct_;
   QAction *updateFeedAct_;
+  QAction *sendToRedmineAct_;
   QAction *deleteNewsAct_;
   QAction *deleteAllNewsAct_;
   QAction *newsKeyUpAct_;
@@ -279,6 +281,7 @@ public slots:
   void slotFeedSelected(QModelIndex index, bool createTab = false);
   void setFeedsFilter(bool clicked = true);
   void slotGetFeed();
+  void sendToRedmine();
   void slotGetAllFeeds();
   void slotStopUpdate();
   void showProgressBar(int addToMaximum);

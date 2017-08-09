@@ -939,6 +939,11 @@ void MainWindow::createActions()
   this->addAction(updateFeedAct_);
   connect(updateFeedAct_, SIGNAL(triggered()), this, SLOT(slotGetFeed()));
 
+  sendToRedmineAct_ = new QAction(this);
+  sendToRedmineAct_->setObjectName("sendToRedmineAct");
+  sendToRedmineAct_->setIcon(QIcon(":/images/openBrowser"));
+  connect(sendToRedmineAct_, SIGNAL(triggered()), this, SLOT(sendToRedmine()));
+
   updateAllFeedsAct_ = new QAction(this);
   updateAllFeedsAct_->setObjectName("updateAllFeedsAct");
   updateAllFeedsAct_->setIcon(QIcon(":/images/updateAllFeeds"));
@@ -1937,6 +1942,7 @@ void MainWindow::loadSettings()
   showSplashScreen_ = settings.value("showSplashScreen", true).toBool();
   reopenFeedStartup_ = settings.value("reopenFeedStartup", true).toBool();
   openNewTabNextToActive_ = settings.value("openNewTabNextToActive", false).toBool();
+  redmineUrl_ = settings.value("redmineUrl", "").toString();
 
   showTrayIcon_ = settings.value("showTrayIcon", true).toBool();
 #ifndef Q_OS_MAC
@@ -2297,6 +2303,7 @@ void MainWindow::saveSettings()
   settings.setValue("showSplashScreen", showSplashScreen_);
   settings.setValue("reopenFeedStartup", reopenFeedStartup_);
   settings.setValue("openNewTabNextToActive", openNewTabNextToActive_);
+  settings.setValue("redmineUrl", redmineUrl_);
 
   settings.setValue("createLastFeed", mainApp->isSaveDataLastFeed());
 
@@ -3322,6 +3329,7 @@ void MainWindow::showOptionDlg(int index)
   optionsDialog_->autocollapseFolder_->setChecked(feedsView_->autocollapseFolder_);
   bool showCloseButtonTab = settings.value("Settings/showCloseButtonTab", true).toBool();
   optionsDialog_->showCloseButtonTab_->setChecked(showCloseButtonTab);
+  optionsDialog_->redmineUrl_->setText(redmineUrl_);
 
   bool updateCheckEnabled = settings.value("Settings/updateCheckEnabled", true).toBool();
   optionsDialog_->updateCheckEnabled_->setChecked(updateCheckEnabled);
@@ -3719,6 +3727,7 @@ void MainWindow::showOptionDlg(int index)
   defaultIconFeeds_ = optionsDialog_->defaultIconFeeds_->isChecked();
   feedsModel_->defaultIconFeeds_ = defaultIconFeeds_;
   feedsView_->autocollapseFolder_ = optionsDialog_->autocollapseFolder_->isChecked();
+  redmineUrl_ = optionsDialog_->redmineUrl_->text();
 
   showCloseButtonTab = optionsDialog_->showCloseButtonTab_->isChecked();
   settings.setValue("Settings/showCloseButtonTab", showCloseButtonTab);
@@ -4144,6 +4153,13 @@ void MainWindow::slotGetFeed()
       }
     }
   }
+}
+
+/** @brief Send the selected RSS to Redmine as a security bug
+ *---------------------------------------------------------------------------*/
+void MainWindow::sendToRedmine()
+{
+    currentNewsTab->sendToRedmine();
 }
 
 /** @brief Process update all feeds action
@@ -4848,6 +4864,9 @@ void MainWindow::retranslateStrings()
 
   updateFeedAct_->setText(tr("Update Feed"));
   updateFeedAct_->setToolTip(tr("Update Current Feed"));
+
+  sendToRedmineAct_->setText(tr("Send to redmine"));
+  sendToRedmineAct_->setToolTip(tr("Send selection as issue to redmine"));
 
   updateAllFeedsAct_->setText(tr("Update All"));
   updateAllFeedsAct_->setToolTip(tr("Update All Feeds"));

@@ -296,6 +296,16 @@ void OptionsDialog::createGeneralWidget()
   defaultIconFeeds_ = new QCheckBox(tr("Show default rss-icon instead of favourite one"));
   autocollapseFolder_ = new QCheckBox(tr("Automatically collapse folders"));
   showCloseButtonTab_ = new QCheckBox(tr("Show close button on tab"));
+  redmineUrl_ = new LineEdit();
+
+  QHBoxLayout *redmineUrlLayout = new QHBoxLayout();
+  redmineUrlLayout->setContentsMargins(15, 0, 0, 0);
+  redmineUrlLayout->addWidget(new QLabel(tr("Redmine URL (create issues with selected RSS)")));
+  redmineUrlLayout->addWidget(redmineUrl_);
+  redmineUrlLayout->addStretch();
+
+  QWidget *redmineUrlWidget = new QWidget();
+  redmineUrlWidget->setLayout(redmineUrlLayout);
 
   updateCheckEnabled_ = new QCheckBox(tr("Automatically check for updates"));
   statisticsEnabled_ = new QCheckBox(tr("Help improve QuiteRSS by sending usage information"));
@@ -327,6 +337,7 @@ void OptionsDialog::createGeneralWidget()
   generalLayout->addWidget(defaultIconFeeds_);
   generalLayout->addWidget(autocollapseFolder_);
   generalLayout->addWidget(showCloseButtonTab_);
+  generalLayout->addWidget(redmineUrlWidget);
   generalLayout->addSpacing(20);
 
 #if defined(Q_OS_WIN)

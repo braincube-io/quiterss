@@ -56,6 +56,7 @@ public:
   QCheckBox *statisticsEnabled_;
   QCheckBox *storeDBMemory_;
   QSpinBox *saveDBMemFileInterval_;
+  LineEdit *redmineUrl_;
 
   // systemTray
   void setBehaviorIconTray(int behavior);

@@ -118,6 +118,7 @@ HEADERS += \
     src/network/networkmanagerproxy.h \
     src/adblock/adblockmatcher.h \
     src/feedsview/feedsproxymodel.h \
+    src/qredminedialog.h
 
 SOURCES += \
     src/parseobject.cpp \
@@ -186,7 +187,8 @@ SOURCES += \
     src/network/sslerrordialog.cpp \
     src/network/networkmanagerproxy.cpp \
     src/adblock/adblockmatcher.cpp \
-    src/feedsview/feedsproxymodel.cpp
+    src/feedsview/feedsproxymodel.cpp \
+    src/qredminedialog.cpp
 
 INCLUDEPATH +=  $$PWD/src \
                 $$PWD/src/application \

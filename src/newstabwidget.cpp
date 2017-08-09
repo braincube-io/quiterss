@@ -21,6 +21,7 @@
 #include "adblockicon.h"
 #include "settings.h"
 #include "webpage.h"
+#include "qredminedialog.h"
 
 #if defined(Q_OS_WIN)
 #include <qt_windows.h>
@@ -327,6 +328,11 @@ void NewsTabWidget::showContextMenuNews(const QPoint &pos)
   menu.addSeparator();
   menu.addAction(mainWindow_->deleteNewsAct_);
   menu.addAction(mainWindow_->deleteAllNewsAct_);
+
+  if( !mainWindow_->redmineUrl_.isEmpty() ){
+      menu.addSeparator();
+      menu.addAction(mainWindow_->sendToRedmineAct_);
+  }
 
   menu.exec(newsView_->viewport()->mapToGlobal(pos));
 }
@@ -1989,7 +1995,7 @@ void NewsTabWidget::webHomePage()
  *----------------------------------------------------------------------------*/
 void NewsTabWidget::openPageInExternalBrowser()
 {
-  openUrl(webView_->url());
+    openUrl(webView_->url());
 }
 
 /** @brief Open news in browser
@@ -2058,6 +2064,64 @@ void NewsTabWidget::openInExternalBrowserNews()
     openUrl(webView_->url());
   }
 }
+
+/** @brief Sends the selected RSS feeds to a new issue in Redmine
+ */
+void NewsTabWidget::sendToRedmine()
+{
+    if (type_ == TabTypeDownloads) return;
+
+    QUrl redmine_url(mainWindow_->redmineUrl_);
+
+    QList<QUrl> cveUrls = QList<QUrl>();
+    if (type_ != TabTypeWeb) {
+      QList<QModelIndex> indexes = newsView_->selectionModel()->selectedRows(0);
+
+      int cnt = indexes.count();
+      if (cnt == 0) return;
+
+      for (int i = cnt-1; i >= 0; --i) {
+        QUrl url = QUrl::fromEncoded(getLinkNews(indexes.at(i).row()).toUtf8());
+        if (url.host().isEmpty() || (QUrl(url).host().indexOf('.') == -1)) {
+          QString feedId = newsModel_->dataField(indexes.at(i).row(), "feedId").toString();
+          QModelIndex feedIndex = feedsModel_->indexById(feedId.toInt());
+          QUrl hostUrl = feedsModel_->dataField(feedIndex, "htmlUrl").toString();
+
+          url.setScheme(hostUrl.scheme());
+          url.setHost(hostUrl.host());
+        }
+        cveUrls.append(url);
+      }
+    }
+
+    QString subject;
+    QString description;
+    foreach (QUrl url, cveUrls) {
+        description.append(url.toString() + "\n");
+    }
+
+    bool ok;
+    QRedmineDialog redmine(subject, description);
+    redmine.showDialog(ok);
+    if( !ok ){
+        return;
+    }
+
+    subject = redmine.subject();
+    description = redmine.description();
+
+    if( !subject.isEmpty() ){
+        redmine_url.addQueryItem("issue[subject]", subject);
+    }
+    if( !description.isEmpty()){
+        redmine_url.addQueryItem("issue[description]", description);
+    }
+
+    openUrl(redmine_url);
+
+
+}
+
 
 void NewsTabWidget::setNewsLayout()
 {
